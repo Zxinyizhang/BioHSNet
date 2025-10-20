@@ -17,24 +17,6 @@ import pandas as pd
 
 from sklearn import metrics
 
-# def train(dataloader):
-#     net.train()
-#     for batch, data in enumerate(dataloader):
-#         x, y, z = data
-#         batch_input1 = x[:, 0].to(device)
-#         batch_input2 = x[:, 1].to(device)
-#         batch_other = y.to(device)
-#         batch_label = z.to(device)
-
-#         # 前向传播，使用共享的 G
-#         output = net(batch_input1, batch_input2, G, batch_other)
-#         loss = criterion(output, batch_label.long())
-
-#         optimizer.zero_grad()
-#         loss.backward()
-#         optimizer.step()
-
-#     torch.cuda.empty_cache()
 def train(data_loader_generator):
     """
     模型训练：处理数据生成器
@@ -144,24 +126,6 @@ def topk_acc(cp_df, kd_df, cell, label_dict1, label_dict2,  kgpt_embeddings_dict
     lists = [cpi_label, cpi_class, cpi_score, brd_list, gene_list]
     return acck, lists
 
-# def loader(all_cp_df):
-#     exps, labels, others = utils.get_pairs(neg_num, all_cp_df, all_kd_df, dti_dict1, cell_lines_dict)
-#     print(exps.size(), others.size(), labels.size())
-#     print('exps memory: {:04f} Gb'.format(exps.element_size() * exps.nelement() / 1024 / 1024 / 1024))
-#     data_set = TensorDataset(exps.float(), labels, others.float())
-#     data_loader = DataLoader(dataset=data_set, num_workers=3, batch_size=batch_size, shuffle=True, pin_memory=True)
-#     return data_loader
-
-# def loader(cp_df, batch_size):
-#     """
-#     使用数据生成器加载数据
-#     """
-#     generator = utils.data_generator(neg_num, cp_df, all_kd_df, dti_dict1, cell_lines_dict, batch_size)
-#     for exps, others, labels in generator:
-#         data_set = TensorDataset(exps, others, labels)
-#         data_loader = DataLoader(dataset=data_set, num_workers=3, batch_size=batch_size, shuffle=True, pin_memory=True)
-#         yield data_loader
-
 def loader(save_dir):
     """
     从硬盘加载已保存的批次数据
@@ -262,15 +226,6 @@ test_save_dir = "test_batches"
 end_time = time.time()
 print('time for data generating: {:.5f}'.format(end_time - start_time))
 
-# train_dataloader = loader(train_cp_df, batch_size)
-# valid_dataloader = loader(valid_cp_df, batch_size)
-# test_dataloader = loader(test_cp_df, batch_size)
-# with open('pickle/train_dataloader.pickle', 'wb') as train_data_file:
-#     pkl.dump(train_dataloader, train_data_file)
-# with open('pickle/valid_dataloader.pickle', 'wb') as valid_data_file:
-#     pkl.dump(valid_dataloader, valid_data_file)
-# with open('pickle/test_dataloader.pickle', 'wb') as test_data_file:
-#     pkl.dump(test_dataloader, test_data_file)
 
 #resume_training = resume_training  # 设置为 True 表示从断点恢复
 save_path = "latest_checkpoint.pt"
@@ -402,24 +357,11 @@ net.load_state_dict(torch.load(file)['net'],strict=False)
 #     print(cell, test_acck1)
 
 # print('#########Topk acc test in phase2') #phase2外部测试集上的效果
-# for cell in ['A375','A549','HA1E','HT29','MCF7','PC3']: #没有'VCAP'数据
-#     cell_kd_df, cell_cp_df = utils.get_acck_df(cell)
-#     test_acck1, lists = topk_acc(cell_cp_df, cell_kd_df, cell, cp_label_dict, kd_label_dict, kgpt_embeddings_dict2)
-#     print(cell, test_acck1)
-
-# print('#########Topk=50#########')
-# top_k = 50
-# print('#########Topk acc test in phase1') #phase1测试集上的效果
 # for cell in ['A375','A549','HA1E','HT29','MCF7','PC3']:
-#     cell_kd_df, cell_cp_df = utils.get_acck_df2(cell)
-#     test_acck1, lists = topk_acc(cell_cp_df, cell_kd_df, cell, cp_label_dict, kd_label_dict, kgpt_embeddings_dict)
-#     print(cell, test_acck1)
-
-# print('#########Topk acc test in phase2') #phase2外部测试集上的效果
-# for cell in ['A375','A549','HA1E','HT29','MCF7','PC3']: #没有'VCAP'数据
 #     cell_kd_df, cell_cp_df = utils.get_acck_df(cell)
 #     test_acck1, lists = topk_acc(cell_cp_df, cell_kd_df, cell, cp_label_dict, kd_label_dict, kgpt_embeddings_dict2)
 #     print(cell, test_acck1)
+
 
 print('#########Topk=100#########')
 top_k = 100
@@ -431,7 +373,7 @@ for cell in ['A375','A549','HA1E','HT29','MCF7','PC3']:
 
 
 print('#########Topk acc test in phase2') #phase2外部测试集上的效果
-for cell in ['A375','A549','HA1E','HT29','MCF7','PC3']: #没有'VCAP'数据
+for cell in ['A375','A549','HA1E','HT29','MCF7','PC3']:
     cell_kd_df, cell_cp_df = utils.get_acck_df(cell)
     test_acck1, lists = topk_acc(cell_cp_df, cell_kd_df, cell, cp_label_dict, kd_label_dict, kgpt_embeddings_dict2)
     print(cell, test_acck1)
